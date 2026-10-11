@@ -1,0 +1,63 @@
+name: release
+
+# Push a tag like v0.1.1 and this builds Helm for macOS (Apple Silicon + Intel), Windows and Linux,
+# then attaches the installers to the GitHub release.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: --target aarch64-apple-darwin
+          - platform: macos-latest
+            args: --target x86_64-apple-darwin
+          - platform: ubuntu-22.04
+            args: ''
+          - platform: windows-latest
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - name: Linux build deps
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+      - run: npm ci
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'Helm ${{ github.ref_name }}'
+          releaseBody: |
+            **Helm**: one window for every terminal, agent and page. Built by [@meaynx](https://x.com/meaynx).
+
+            | Platform | Download |
+            |---|---|
+            | macOS · Apple Silicon | `Helm_*_aarch64.dmg` |
+            | macOS · Intel | `Helm_*_x64.dmg` |
+            | Windows | `Helm_*_x64-setup.exe` or `.msi` |
+            | Linux | `.AppImage`, `.deb` or `.rpm` |
+
+            macOS builds aren't notarized yet: after installing, run `xattr -dr com.apple.quarantine /Applications/Helm.app` once.
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}

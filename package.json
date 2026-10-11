@@ -5,7 +5,8 @@
     "vendor": "mkdir -p ui/vendor && cp node_modules/@xterm/xterm/lib/xterm.js node_modules/@xterm/xterm/css/xterm.css node_modules/@xterm/addon-fit/lib/addon-fit.js node_modules/@xterm/addon-webgl/lib/addon-webgl.js node_modules/@xterm/addon-web-links/lib/addon-web-links.js ui/vendor/",
     "postinstall": "npm run vendor",
     "dev": "tauri dev",
-    "build": "tauri build"
+    "build": "tauri build",
+    "tauri": "tauri"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
@@ -13,5 +14,9 @@
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/addon-webgl": "^0.18.0",
     "@xterm/addon-web-links": "^0.11.0"
-  }
+  },
+  "version": "0.1.1",
+  "description": "Helm: terminal command center for Claude Code, Codex and AI coding agents",
+  "author": "meaynx (https://x.com/meaynx)",
+  "license": "MIT"
 }

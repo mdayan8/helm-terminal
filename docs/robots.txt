@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mdayan8.github.io/helm-terminal/sitemap.xml

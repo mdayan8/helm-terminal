@@ -1,7 +1,11 @@
 [package]
 name = "helm"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
+description = "Helm: terminal command center for Claude Code, Codex and AI coding agents"
+authors = ["meaynx <https://x.com/meaynx>"]
+license = "MIT"
+repository = "https://github.com/mdayan8/helm-terminal"
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

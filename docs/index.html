@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Helm: terminal command center for Claude Code, Codex &amp; AI coding agents</title>
+<meta name="description" content="Helm is a free, open-source terminal command center for AI coding agents. Run multiple Claude Code, Codex, Gemini CLI and OpenCode sessions in one window with auto-tiling splits, tags, browser panes, live Claude usage limits and account rotation. 3 MB, Rust. macOS, Windows, Linux.">
+<meta name="keywords" content="Claude Code, multiple Claude Code sessions, Claude Code usage limit, Claude Code usage tracker, Codex CLI, Gemini CLI, AI coding agents, AI agent terminal, tmux alternative, terminal multiplexer, Tauri, Rust terminal, Claude account rotation, OpenCode, Aider, Cursor Agent">
+<meta name="author" content="meaynx">
+<link rel="canonical" href="https://mdayan8.github.io/helm-terminal/">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0c11">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Helm">
+<meta property="og:title" content="Helm: one window for every Claude Code, Codex & AI agent terminal">
+<meta property="og:description" content="Auto-tiling splits, tags, browser panes, live Claude usage limits and account rotation. Free, open source, 3 MB.">
+<meta property="og:url" content="https://mdayan8.github.io/helm-terminal/">
+<meta property="og:image" content="https://mdayan8.github.io/helm-terminal/hero.jpg">
+<meta property="og:image:alt" content="Helm running two Claude Code agents, a dev server and a browser pane in one window">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@meaynx">
+<meta name="twitter:creator" content="@meaynx">
+<meta name="twitter:title" content="Helm: one window for every Claude Code, Codex & AI agent terminal">
+<meta name="twitter:description" content="Auto-tiling splits, tags, browser panes, live Claude usage limits and account rotation. Free, open source, 3 MB.">
+<meta name="twitter:image" content="https://mdayan8.github.io/helm-terminal/hero.jpg">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Helm","alternateName":"Helm terminal","applicationCategory":"DeveloperApplication","operatingSystem":"macOS, Windows, Linux",
+"description":"Terminal command center for Claude Code, Codex and AI coding agents: auto-tiling split panes, tags, browser panes, live Claude usage limits and account rotation.",
+"url":"https://mdayan8.github.io/helm-terminal/","downloadUrl":"https://github.com/mdayan8/helm-terminal/releases/latest","softwareVersion":"0.1.1","license":"https://opensource.org/licenses/MIT",
+"image":"https://mdayan8.github.io/helm-terminal/hero.jpg","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+"author":{"@type":"Person","name":"meaynx","url":"https://x.com/meaynx"},"codeRepository":"https://github.com/mdayan8/helm-terminal"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I run multiple Claude Code sessions at the same time?","acceptedAnswer":{"@type":"Answer","text":"Install Helm and type 3x claude in the command bar. Each session gets its own auto-tiled pane; add #tag to group them and @~/path to set the folder."}},
+{"@type":"Question","name":"How do I check my Claude Code usage limit?","acceptedAnswer":{"@type":"Answer","text":"Helm's sidebar shows your live Claude Code 5-hour session % and weekly %, with time until reset, the same data /usage shows."}},
+{"@type":"Question","name":"What do I do when Claude Code hits the usage limit?","acceptedAnswer":{"@type":"Answer","text":"Add a second account with account add, then press Shift+Cmd+R. Helm restarts the session on the account with the most room using claude --continue, so the conversation carries over."}},
+{"@type":"Question","name":"Is there a tmux alternative for AI coding agents?","acceptedAnswer":{"@type":"Answer","text":"Helm: split panes and tiling like tmux, plus AI agent detection, needs-you alerts, usage limits and prompt broadcasting to groups of agents."}},
+{"@type":"Question","name":"Is Helm free?","acceptedAnswer":{"@type":"Answer","text":"Yes. Helm is open source under the MIT license, with no account and no telemetry."}}]}
+</script>
+<style>
+:root{--bg:#07080d;--panel:#0f1218;--line:#1c2130;--text:#e2e6f0;--mute:#8890a5;--acc:#7c5cff;--acc2:#22d3ee}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 -apple-system,BlinkMacSystemFont,Inter,"Segoe UI",sans-serif;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.glow{position:absolute;inset:-200px 0 auto;height:700px;background:radial-gradient(600px 300px at 70% 20%,#7c5cff55,transparent),radial-gradient(500px 260px at 20% 40%,#22d3ee33,transparent);pointer-events:none;z-index:-1}
+nav{display:flex;align-items:center;gap:14px;padding:18px 0}
+nav .b{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}
+nav .b img{width:30px}
+nav .sp{flex:1}
+nav a.l{color:var(--mute);text-decoration:none;font-size:14px}
+nav a.l:hover{color:var(--text)}
+header{text-align:center;padding:56px 0 30px;position:relative}
+h1{font-size:clamp(34px,6vw,62px);line-height:1.05;margin:0 0 18px;letter-spacing:-1.5px}
+.g{background:linear-gradient(120deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(16px,2.2vw,20px);color:var(--mute);max-width:720px;margin:0 auto 30px}
+.dl{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:12px;text-decoration:none;font-weight:600;border:1px solid var(--line);background:var(--panel);transition:.15s}
+.btn:hover{border-color:var(--acc);transform:translateY(-1px)}
+.btn.p{background:linear-gradient(120deg,var(--acc),#5b8cff);border:0;color:#fff}
+.btn svg{width:18px;height:18px;fill:currentColor}
+.meta{margin-top:16px;font-size:13px;color:var(--mute)}
+.meta a{color:var(--acc2)}
+.hero{margin:44px auto 0;border-radius:18px;overflow:hidden;box-shadow:0 40px 120px -30px #7c5cff66;border:1px solid var(--line)}
+.hero img{display:block;width:100%;height:auto}
+.works{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin:34px 0 0;color:var(--mute);font-size:14px}
+.works b{color:var(--text);font-weight:600}
+section{padding:70px 0 0}
+h2{font-size:clamp(26px,3.5vw,36px);margin:0 0 10px;letter-spacing:-.5px}
+.sub{color:var(--mute);margin:0 0 30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{margin:0 0 6px;font-size:16px}
+.card p{margin:0;color:var(--mute);font-size:14px}
+.card .i{font-size:22px;margin-bottom:8px}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.shots img{width:100%;border-radius:14px;border:1px solid var(--line);display:block}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;overflow-x:auto;font:13.5px/1.7 "JetBrains Mono","SF Mono",Menlo,monospace;color:#c7cde0}
+pre .c{color:var(--acc2)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:center}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mute);font-weight:600}
+td.y{color:#34d399}
+.tw{overflow-x:auto}
+details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600}
+details p{color:var(--mute);margin:10px 0 0}
+footer{padding:80px 0 50px;text-align:center;color:var(--mute);font-size:14px}
+footer .by{font-size:20px;color:var(--text);margin-bottom:14px}
+footer .by a{text-decoration:none;color:var(--acc2)}
+@media (max-width:700px){.shots{grid-template-columns:1fr}nav a.l{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="b" href="./"><img src="logo.svg" alt="Helm logo">Helm</a>
+    <span class="sp"></span>
+    <a class="l" href="#features">Features</a>
+    <a class="l" href="#compare">vs tmux</a>
+    <a class="l" href="#faq">FAQ</a>
+    <a class="btn" href="https://github.com/mdayan8/helm-terminal">★ Star on GitHub</a>
+  </nav>
+
+  <header>
+    <div class="glow"></div>
+    <h1>One window for every<br><span class="g">AI agent &amp; terminal</span></h1>
+    <p class="lead">Helm is the command center for <b>Claude Code</b>, <b>Codex</b>, <b>Gemini CLI</b> and every terminal you run. Auto-tiling splits, tags, browser panes, <b>live Claude usage limits</b> and <b>account rotation</b>, in a 3 MB native app.</p>
+    <div class="dl">
+      <a class="btn p" href="https://github.com/mdayan8/helm-terminal/releases/latest"><svg viewBox="0 0 24 24"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1zM13.9 4.9c.7-.9 1.2-2 1.1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.1.1 2.3-.6 3-1.5z"/></svg>Download for macOS</a>
+      <a class="btn" href="https://github.com/mdayan8/helm-terminal/releases/latest"><svg viewBox="0 0 24 24"><path d="M0 3.45 9.75 2.1v9.4H0zm10.95-1.5L24 0v11.4H10.95zM0 12.6h9.75v9.45L0 20.7zm10.95 0H24V24l-13.05-1.8z"/></svg>Windows</a>
+      <a class="btn" href="https://github.com/mdayan8/helm-terminal/releases/latest"><svg viewBox="0 0 24 24"><path d="M12 2C9.8 2 9 4.2 9 6.2c0 1.3.3 2.1-.6 3.4-1 1.4-3 3.8-3.2 6.4-.1 1.1.2 2.1.7 2.8-.9.4-1.9.7-1.9 1.6 0 1 1.4 1.1 3 1.4 1.4.3 2.4 1.2 3.4 1.2s1.5-.6 1.6-.6c.1 0 .6.6 1.6.6s2-.9 3.4-1.2c1.6-.3 3-.4 3-1.4 0-.9-1-1.2-1.9-1.6.5-.7.8-1.7.7-2.8-.2-2.6-2.2-5-3.2-6.4-.9-1.3-.6-2.1-.6-3.4C15 4.2 14.2 2 12 2z"/></svg>Linux</a>
+    </div>
+    <p class="meta">Free &amp; open source (MIT) · no account, no telemetry · built by <a href="https://x.com/meaynx">@meaynx</a></p>
+    <div class="hero"><img src="hero.jpg" alt="Helm running two Claude Code agents, a dev server and a live browser pane in auto-tiled splits, with Claude usage limits in the sidebar" width="2400" height="1590"></div>
+    <div class="works">Works with <b>Claude Code</b><b>Codex CLI</b><b>Gemini CLI</b><b>OpenCode</b><b>Aider</b><b>Cursor Agent</b><b>Copilot CLI</b><b>Amp</b><b>Goose</b><span>and any terminal tool</span></div>
+  </header>
+
+  <section id="features">
+    <h2>Built for running <span class="g">five agents at once</span></h2>
+    <p class="sub">Everything a normal terminal doesn't know about your AI agents.</p>
+    <div class="grid">
+      <div class="card"><div class="i">🤖</div><h3>Agents auto-detected</h3><p>claude, codex, gemini, opencode, aider, cursor-agent and more get one-click launchers.</p></div>
+      <div class="card"><div class="i">🪟</div><h3>Auto-tiling splits</h3><p>New panes split along the longer side. Drag headers to re-split or swap. <code>layout grid</code> re-tiles.</p></div>
+      <div class="card"><div class="i">📊</div><h3>Live usage limits</h3><p>Real Claude Code 5-hour and weekly %, Codex limits, tokens per model, reset countdowns.</p></div>
+      <div class="card"><div class="i">🔄</div><h3>Account rotation</h3><p>Out of room? ⇧⌘R moves the session to another Claude account with <code>--continue</code>.</p></div>
+      <div class="card"><div class="i">🏷️</div><h3>Tags and broadcast</h3><p><code>send #api run the tests</code> types into every agent in the group at once.</p></div>
+      <div class="card"><div class="i">🧠</div><h3>Smart layout</h3><p>Busy panes and panes waiting on you grow, idle ones shrink. Rules only, zero tokens.</p></div>
+      <div class="card"><div class="i">🌐</div><h3>Browser panes</h3><p>Real webviews beside your terminals. Click a link in a terminal and it opens in a split.</p></div>
+      <div class="card"><div class="i">🎨</div><h3>Themes and glass</h3><p>8 themes, see-through window, frosted glass. Or type <code>/ make it synthwave</code> and Claude restyles it.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shots">
+      <img src="themes.jpg" alt="Helm settings with 8 themes, transparency, frosted glass and Claude accounts" loading="lazy">
+      <img src="tags.jpg" alt="Helm filtering panes by tag in the sunset theme" loading="lazy">
+    </div>
+  </section>
+
+  <section>
+    <h2>One command bar for everything</h2>
+    <p class="sub">Press ⌘K and type.</p>
+<pre><span class="c">3x claude #api @~/code/api</span>     three Claude Code agents, tagged, in a folder
+<span class="c">codex #api</span>                     OpenAI Codex CLI in the same group
+<span class="c">npm run dev [server]</span>           any command, in a titled pane
+<span class="c">web localhost:3000</span>             browser pane
+<span class="c">send #api fix the failing test</span> broadcast to every agent tagged api
+<span class="c">app Slack</span>                      launch a desktop app
+<span class="c">adopt</span>                          pull in your Terminal / iTerm tabs
+<span class="c">theme tokyo · opacity 70</span>       restyle live</pre>
+  </section>
+
+  <section id="compare">
+    <h2>Helm vs tmux, Zellij, Warp &amp; iTerm2</h2>
+    <p class="sub">Great terminals, but none of them knows an agent is waiting on you.</p>
+    <div class="tw"><table>
+      <tr><th></th><th>Helm</th><th>tmux / Zellij</th><th>Warp</th><th>iTerm2</th></tr>
+      <tr><td>Split panes &amp; tiling</td><td class="y">auto</td><td>manual</td><td>✓</td><td>✓</td></tr>
+      <tr><td>AI agent detection</td><td class="y">✓</td><td>—</td><td>partial</td><td>—</td></tr>
+      <tr><td>"Agent needs you" alerts</td><td class="y">✓</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>Live Claude / Codex limits</td><td class="y">✓</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>Claude account rotation</td><td class="y">✓</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>Browser pane</td><td class="y">✓</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>App size</td><td class="y">3.3 MB</td><td>CLI</td><td>~300 MB</td><td>~60 MB</td></tr>
+    </table></div>
+  </section>
+
+  <section id="faq">
+    <h2>FAQ</h2>
+    <details><summary>How do I run multiple Claude Code sessions at the same time?</summary><p>Install Helm and type <code>3x claude</code> in the command bar. Each session gets its own auto-tiled pane. Add <code>#tag</code> to group them and <code>@~/path</code> to set the folder.</p></details>
+    <details><summary>How do I check my Claude Code usage limit?</summary><p>Helm's sidebar shows your live 5-hour session % and weekly %, with time until reset, the same data <code>/usage</code> shows.</p></details>
+    <details><summary>What do I do when Claude Code hits the usage limit?</summary><p>Add a second account with <code>account add work</code>, then press ⇧⌘R. Helm restarts the session on the account with the most room using <code>claude --continue</code>, so the conversation carries over.</p></details>
+    <details><summary>Is there a tmux alternative for AI coding agents?</summary><p>Helm: split panes like tmux, plus agent detection, "needs you" alerts, usage limits and prompt broadcasting.</p></details>
+    <details><summary>Does it work with Codex, Gemini CLI, OpenCode, Aider or Cursor Agent?</summary><p>Yes. Anything that runs in a terminal runs in Helm, and the common agent CLIs are detected automatically.</p></details>
+    <details><summary>Is Helm free?</summary><p>Yes. MIT licensed, no account, no telemetry.</p></details>
+  </section>
+
+  <footer>
+    <div class="by">Built by <a href="https://x.com/meaynx">@meaynx</a></div>
+    <div class="dl">
+      <a class="btn" href="https://github.com/mdayan8/helm-terminal">★ Star on GitHub</a>
+      <a class="btn" href="https://x.com/intent/post?text=Helm%3A%20one%20window%20for%20every%20Claude%20Code%2C%20Codex%20and%20AI%20agent%20terminal%2C%20with%20live%20usage%20limits%20and%20account%20rotation.%20Open%20source%2C%203%20MB%2C%20Rust.%20by%20%40meaynx&url=https%3A%2F%2Fmdayan8.github.io%2Fhelm-terminal%2F">Share on X</a>
+    </div>
+    <p>MIT licensed · Helm is not affiliated with Anthropic, OpenAI or Google.</p>
+  </footer>
+</div>
+</body>
+</html>
