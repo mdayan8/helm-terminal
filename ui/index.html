@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Helm</title>
+<link rel="stylesheet" href="vendor/xterm.css">
+<link rel="stylesheet" href="style.css">
+<script src="vendor/xterm.js"></script>
+<script src="vendor/addon-fit.js"></script>
+<script src="vendor/addon-webgl.js"></script>
+<script src="vendor/addon-web-links.js"></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<div id="titlebar" data-tauri-drag-region>
+  <span class="brand" data-tauri-drag-region><b>◆</b> Helm</span>
+  <div id="tagbar"></div>
+  <span class="sp" data-tauri-drag-region></span>
+  <div id="stats"></div>
+  <div id="launch"></div>
+</div>
+<div id="main">
+  <aside id="side">
+    <div class="sec">Sessions</div>
+    <div id="list"></div>
+    <div class="sec">Usage <button id="usage-ts" title="refresh now">↻</button></div>
+    <div id="usage"><div class="muted">reading logs…</div></div>
+  </aside>
+  <section id="stage"></section>
+</div>
+<div id="cmdbar">
+  <span class="prompt">❯</span>
+  <input id="cmd" spellcheck="false" autocomplete="off" placeholder="claude #api @~/proj  ·  app Slack  ·  theme nord  ·  / make the borders glow  ·  help">
+  <span id="hint">⌘K</span>
+</div>
+<div id="help" class="modal" hidden>
+  <div class="card">
+    <h3>Spawn &amp; route</h3>
+    <table>
+      <tr><td>claude · codex · gemini …</td><td>agent in a new split (any command works)</td></tr>
+      <tr><td>3x claude #api @~/proj</td><td>3 panes, tagged api, started in ~/proj</td></tr>
+      <tr><td>claude !work</td><td>use a specific Claude account (otherwise the least-used one)</td></tr>
+      <tr><td>shell · web github.com</td><td>plain shell · browser pane</td></tr>
+      <tr><td>npm run dev [server]</td><td>run a command in a pane titled “server”</td></tr>
+      <tr><td>app Slack · open Claude</td><td>launch any desktop app</td></tr>
+      <tr><td>adopt</td><td>pull the tabs open in Terminal / iTerm into Helm (agents resume)</td></tr>
+      <tr><td>send #api fix the tests</td><td>type into every pane tagged api (* = all, 2 = pane 2)</td></tr>
+      <tr><td>&gt; ls -la</td><td>send to the focused pane</td></tr>
+      <tr><td>tag #x · view #x · view all</td><td>tag focused pane · show only a tag</td></tr>
+      <tr><td>layout grid|cols|rows · close #x</td><td>re-tile · close focused / tagged</td></tr>
+    </table>
+    <h3>Accounts</h3>
+    <table>
+      <tr><td>account add work</td><td>add a Claude account (run /login in the pane that opens)</td></tr>
+      <tr><td>rotate · ⇧⌘R</td><td>hand the focused Claude session to the account with most room</td></tr>
+    </table>
+    <h3>Look</h3>
+    <table>
+      <tr><td>theme nord · opacity 70 · blur on</td><td>theme, see-through window, frosted glass</td></tr>
+      <tr><td>font 14 · auto off</td><td>font size · smart pane sizing</td></tr>
+      <tr><td>/ make the tab bar pink</td><td>ask Claude to restyle Helm (edits ~/.helm)</td></tr>
+      <tr><td>settings · ⌘,</td><td>all of the above with buttons</td></tr>
+    </table>
+    <h3>Keys</h3>
+    <table>
+      <tr><td>⌘K · ⌘, · ⌘/</td><td>command bar · settings · this help</td></tr>
+      <tr><td>⌘T · ⌘D · ⇧⌘D</td><td>new shell · split right · split down</td></tr>
+      <tr><td>⌘W · ⌘↩ · ⌘B</td><td>close · zoom · sidebar</td></tr>
+      <tr><td>⌘1-9 · ⌘[ ⌘]</td><td>jump to pane · cycle</td></tr>
+    </table>
+    <p class="muted">Drag a pane header onto another pane's edge to split there (centre = swap). Drop a link from your browser onto a pane to open it beside it.</p>
+  </div>
+</div>
+<div id="settings" class="modal" hidden><div class="card" id="settings-body"></div></div>
+</body>
+</html>

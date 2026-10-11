@@ -1,0 +1,17 @@
+{
+  "name": "helm",
+  "private": true,
+  "scripts": {
+    "vendor": "mkdir -p ui/vendor && cp node_modules/@xterm/xterm/lib/xterm.js node_modules/@xterm/xterm/css/xterm.css node_modules/@xterm/addon-fit/lib/addon-fit.js node_modules/@xterm/addon-webgl/lib/addon-webgl.js node_modules/@xterm/addon-web-links/lib/addon-web-links.js ui/vendor/",
+    "postinstall": "npm run vendor",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@xterm/xterm": "^5.5.0",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/addon-webgl": "^0.18.0",
+    "@xterm/addon-web-links": "^0.11.0"
+  }
+}
